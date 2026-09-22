@@ -7,9 +7,9 @@ name: Android CI
 # clean machine, not only the developer's own PC.
 on:
   push:
-    branches: [  "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
@@ -72,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: communiserve-sa-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: CommuniServe_SA_Part2_Updated/app/build/outputs/apk/debug/app-debug.apk
 
       # Always publish test results, even if the test step above failed,
       # so a failing test is visible in the Actions run rather than just a
@@ -82,4 +82,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: unit-test-results
-          path: app/build/reports/tests/testDebugUnitTest/
+          path: CommuniServe_SA_Part2_Updated/app/build/reports/tests/testDebugUnitTest/
