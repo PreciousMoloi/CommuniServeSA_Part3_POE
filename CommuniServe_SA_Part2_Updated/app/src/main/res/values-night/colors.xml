@@ -1,0 +1,10 @@
+<resources>
+    <color name="cream_bg">#121212</color>
+    <color name="surface">#1E1E1E</color>
+    <color name="surface_alt">#2A2A2A</color>
+    <color name="ink_900">#F5F5F5</color>
+    <color name="ink_600">#C8C8C8</color>
+    <color name="ink_400">#9E9E9E</color>
+    <color name="divider">#3A3A3A</color>
+    <color name="teal_100">#24483F</color>
+</resources>
