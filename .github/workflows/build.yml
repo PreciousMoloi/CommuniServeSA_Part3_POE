@@ -7,9 +7,9 @@ name: Android CI
 # clean machine, not only the developer's own PC.
 on:
   push:
-    branches: [ "master", "main" ]
+    branches: [  "main" ]
   pull_request:
-    branches: [ "master","main" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -41,6 +41,7 @@ jobs:
             build-tools;35.0.0
 
       - name: Grant execute permission for gradlew
+        working-directory: CommuniServe_SA_Part2_Updated
         run: chmod +x gradlew
 
       # Speeds up subsequent runs by reusing downloaded dependencies instead
@@ -56,9 +57,11 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Run unit tests
+        working-directory: CommuniServe_SA_Part2_Updated
         run: ./gradlew testDebugUnitTest --stacktrace
 
       - name: Build debug APK
+        working-directory: CommuniServe_SA_Part2_Updated
         run: ./gradlew assembleDebug --stacktrace
 
       # Publishes the built APK as a downloadable build artifact on the
