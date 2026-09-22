@@ -1,12 +1,12 @@
-CommuniServe SA — Part 2 Upgraded Prototype (Submission Build)
-Group Members
-Precious Moloi-ST10452719 Nyiko Matladi-ST10452719 Luvuyo Yizani-ST10442920 Naledi Paballo Tshelane-ST10446045
+## CommuniServe SA — Part 2 Upgraded Prototype (Submission Build)
+## Group Members
+## Precious Moloi-ST10452719 Nyiko Matladi-ST10452719 Luvuyo Yizani-ST10442920 Naledi Paballo Tshelane-ST10446045
 
-OPSC6312 | Android/Kotlin | Part 2
+## OPSC6312 | Android/Kotlin | Part 2
 
 This version is an implementation-focused continuation of Part 1. It targets the Part 2 rubric through a working Android client, REST API, offline Room persistence, settings, location support, reviews, event discovery and three differentiating features.
 
-Implemented features
+## Implemented features
 Email registration and login using the REST API, bcrypt password hashing and 24-hour JWT sessions.
 Service discovery with search and a configurable 1–50 km radius.
 Community event discovery and RSVP interaction.
@@ -24,7 +24,7 @@ Firebase Authentication (email/password) plus Google SSO code. Google SSO/FCM re
 Crash-safe networking: every REST and Firebase call is wrapped so a server/config problem shows a message instead of crashing the app, with failures logged to Logcat (ApiClient, FirebaseAuthManager, CommuniServeApp).
 Runtime-configurable API server address (Login/Profile screen) so the same build works on both the emulator and a physical device.
 Pending approval workflow: new service/event submissions are queued as pending, and a dedicated Pending Approvals screen lets an authenticated user review and approve them, including events.
-Design
+## Design
 The app uses a small custom design system (see MainActivity.kt, "Design system" section) rather than default system widgets everywhere:
 
 Brand colours (res/values/colors.xml): deep teal (#0F5C4D) and warm orange (#E8A33D), matching the palette from the Part 1 UI mockups.
@@ -33,7 +33,7 @@ Branded header banner on every screen (logo + title + optional subtitle on a rou
 Consistent buttons with five intent-based styles (Primary / Secondary / Text / Danger / Firebase) instead of default grey buttons everywhere.
 Card-style list rows for services, events, saved items and reviews, with star ratings, a "✓ Verified" chip, and a coloured accent bar.
 All spacing uses a dp() helper (density-aware), not raw pixels, so layout looks consistent across different screen densities.
-Run the API
+## Run the API
 cd server
 npm install
 JWT_SECRET="replace-with-a-long-random-secret" npm start
@@ -41,7 +41,7 @@ The default development API is http://10.0.2.2:3000/, which only works on the An
 
 For production/Render deployment, use HTTPS and a strong environment JWT_SECRET. Do not submit development secrets to GitHub.
 
-Firebase Authentication setup
+## Firebase Authentication setup
 The app ships with Firebase Authentication, Google SSO and FCM code. Firebase remains optional in this portable ZIP because private project credentials must not be committed to GitHub. To turn it on:
 
 Go to the Firebase Console, Create a project (any name, Analytics optional).
@@ -66,7 +66,7 @@ Builds the debug APK (./gradlew assembleDebug) - if the project doesn't compile,
 Uploads the built APK and the test report as downloadable artifacts on the run's summary page, so both are inspectable without re-running anything locally.
 After pushing, check the Actions tab on GitHub for a green check mark - that's the evidence this requirement is asking for, alongside a screenshot of a passing run for the README/report if needed.
 
-Android Studio
+## Android Studio
 Open this folder in Android Studio.
 Sync Gradle.
 Run app on an Android 8+ emulator or physical device.
@@ -83,7 +83,7 @@ Put the Firebase Web client ID in res/values/strings.xml as google_server_client
 Build and run the app; use Continue with Google (SSO) and Check Push Notification Setup in Profile & Settings.
 Everything else in this submission build is designed to run with the local Node/Express API and RoomDB without those credentials.
 
-Evidence checklist for the final submission
+## Evidence checklist for the final submission
 Physical Android device screenshot/video showing the app running.
 Registration and successful login screenshot.
 Settings changed and retained screenshot.
@@ -99,7 +99,7 @@ Demonstration video showing the complete user journey.
 Important honesty note
 Firebase Authentication/Google Sign-In and Firebase Cloud Messaging are included as planned project technologies from Part 1, but this portable project does not contain a private google-services.json. The working authentication in this package is the REST API + bcrypt + JWT implementation. If the team's Firebase project is available, it can be connected before submission without publishing its configuration secrets.
 
-API 24 compatibility / KSP fix
+## API 24 compatibility / KSP fix
 This version targets Android API 24 (Android 7.0 Nougat) and uses Room 2.6.1 with KSP. If Android Studio reports [ksp][MissingType] for AppDatabase, first sync Gradle, then Clean Project and Rebuild Project. Do not delete the Room dependencies.
 
 Changelog — build-breaking issues found and fixed
@@ -115,10 +115,10 @@ Added an explicit com.squareup.okhttp3:okhttp dependency in app/build.gradle.kts
 Prefs.kt had every property's getter and setter crammed onto a single line (var email: String? get() = ... set(v) { ... }), which the Kotlin compiler failed to parse as a real setter — it read set(v) { ... } as an unresolved function call instead, producing "Property must be initialized", "Unresolved reference 'set'" and "Unresolved reference 'v'" for every property (this is what caused the ~35 errors some builds showed). Rewritten with each getter/setter on its own line, which is unambiguous and always compiles.
 None of the app's intended features changed — the same screens, endpoints and offline/notification/multilingual behaviour described above are all still there. These fixes only make the existing design actually build and run.
 
-AI Tools Usage Write-Up – Part 2
+## AI Tools Usage Write-Up – Part 2
 During the completion of the CommuniServe SA Part 2 implementation, AI tools were used as supporting resources during the build phase of the project. The main AI tools used were ChatGPT and Claude. ChatGPT was used primarily during the planning stage carried over from Part 1, supporting the breakdown of implementation tasks, sequencing of features against the project's Gantt chart, and clarification of how the Part 1 design decisions should translate into the build phase. Claude was used more extensively during the Part 2 build itself. It supported Android app development, including structuring Kotlin classes (e.g. Room DAOs and entities, the REST API client, and the app's data layer), debugging build and compilation errors, and reviewing code for clarity and correctness. Claude also assisted with generating UI mockup guidance used to keep screen layouts consistent with the Part 1 design, helped troubleshoot the GitHub Actions CI pipeline (fixing an Android SDK setup configuration issue and a YAML syntax error that were initially preventing automated builds and tests from running successfully), improved user-facing error messages for authentication failures, and helped design and implement a pending-approval workflow for submitted listings. AI tools were also used to explain technical concepts relevant to the build, including GitHub Actions workflows, Git branching and authentication (personal access tokens), Gradle/Android SDK configuration, and JUnit test structuring. These explanations helped resolve real build failures encountered during development rather than being used to generate the application logic wholesale. AI tools were not used as a replacement for independent development or decision-making. Suggested code and configuration changes were reviewed, tested against the actual GitHub Actions pipeline, and adapted to the project's specific structure before being committed. Errors flagged by AI tools (such as the obsolete tools SDK package and YAML indentation issues) were verified against the actual CI logs before being treated as the root cause. The final implementation decisions, commit history, and working build remained the responsibility of the developer. Overall, ChatGPT was used mainly for planning continuity from Part 1, while Claude was used as a hands-on development and debugging aid during the Part 2 build, including resolving CI/CD configuration issues. AI tools used: ChatGPT and Claude
 
-References
+## References
 Android Developers (2024a) Material Design 3. Available at: https://m3.material.io (Accessed: 22 September 2026).
 Android Developers (2024b) Notification channels. Available at: https://developer.android.com/develop/ui/views/notifications/channels (Accessed: 22 September 2026).
 Android Developers (2024c) Room persistence library. Available at: https://developer.android.com/training/data-storage/room (Accessed: 22 September 2026).
