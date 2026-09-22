@@ -12,7 +12,20 @@
           "package_name": "za.co.communiservesa"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "992589719586-sv2gu5snfr2q05sntscetbh637mmuvbs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "za.co.communiservesa",
+            "certificate_hash": "4dd2768c66fa8cfe7e781dcb9275386860c1cefe"
+          }
+        },
+        {
+          "client_id": "992589719586-761lr1kltethmn7cavi0mrolvvb78knv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAtbQOpRxOVbUO8EJ0z_L_xnAoYx9zeTcw"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "992589719586-761lr1kltethmn7cavi0mrolvvb78knv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
