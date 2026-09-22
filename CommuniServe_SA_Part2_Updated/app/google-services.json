@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "992589719586",
+    "project_id": "communiserve-sa",
+    "storage_bucket": "communiserve-sa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992589719586:android:b70275fa2c4dd80364c27b",
+        "android_client_info": {
+          "package_name": "za.co.communiservesa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtbQOpRxOVbUO8EJ0z_L_xnAoYx9zeTcw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

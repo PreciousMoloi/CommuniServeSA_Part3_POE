@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
+
 
     // Firebase Authentication setup step 2 of 2: uncomment this line ONLY
     // after you have placed your own app/google-services.json (downloaded
