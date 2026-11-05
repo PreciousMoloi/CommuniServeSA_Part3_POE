@@ -39,6 +39,9 @@ test('registrations, reviews and listings survive a server restart (TC-09)', asy
     const { token } = await r.json();
     assert.strictEqual((await post('/api/reviews/s1', { rating: 4, text: 'Survives restart' }, token)).status, 201);
     assert.strictEqual((await post('/api/services', { title: 'Persistent Painter', category: 'Painter' }, token)).status, 201);
+    // The API saves ~100 ms after each change. Windows cannot deliver SIGTERM to a child process
+    // (it kills it instantly), so wait for the normal save to land instead of relying on shutdown.
+    await sleep(500);
   } finally { await stop(server); }
 
   assert.ok(fs.existsSync(DATA_FILE), 'data file must exist on disk after shutdown');
