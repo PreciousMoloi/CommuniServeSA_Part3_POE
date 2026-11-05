@@ -312,6 +312,23 @@ class MainActivity : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
         setContentView(container)
+        applyFallbackInsets(container)
+    }
+
+    /**
+     * Safety net: if the system never reports bar insets (some devices/themes), pad by the
+     * status and navigation bar sizes from resources so content never sits under the system bars.
+     */
+    private fun applyFallbackInsets(container: View) {
+        container.post {
+            if (container.paddingTop == 0 && container.paddingBottom == 0) {
+                fun size(name: String): Int {
+                    val id = resources.getIdentifier(name, "dimen", "android")
+                    return if (id > 0) resources.getDimensionPixelSize(id) else 0
+                }
+                container.setPadding(0, size("status_bar_height"), 0, size("navigation_bar_height"))
+            }
+        }
     }
 
     /** Persistent bottom navigation for the five main destinations. */
@@ -642,6 +659,7 @@ class MainActivity : AppCompatActivity() {
         addView(TextView(this@MainActivity).apply {
             text = "CommuniServe SA"
             textSize = 22f
+            gravity = Gravity.CENTER
             setTypeface(null, Typeface.BOLD)
             setTextColor(color(R.color.teal_700))
             setPadding(0, dp(10), 0, dp(2))
@@ -1007,7 +1025,11 @@ class MainActivity : AppCompatActivity() {
                 }
                 .onFailure { e ->
                     Log.w(TAG, "Retry SSO exchange failed", e)
-                    toast(if (e is HttpException && e.code() == 503) tr(S.SSO_SERVER_NOT_READY) else describeAuthError(e, register = false))
+                    toast(when {
+                        e is HttpException && e.code() == 503 -> tr(S.SSO_SERVER_NOT_READY)
+                        e is HttpException && e.code() == 404 -> tr(S.SSO_SERVER_OUTDATED)
+                        else -> describeAuthError(e, register = false)
+                    })
                 }
         }
     }
@@ -1017,11 +1039,10 @@ class MainActivity : AppCompatActivity() {
         val search = field(tr(S.SEARCH_HINT))
         // Connection status: honest about whether the API session is real.
         val limited = SessionStore.token == "demo"
-        root.addView(chip(
-            if (limited) "\u25CF " + tr(S.LIMITED_STATUS) else "\u25CF " + tr(S.ONLINE_STATUS),
-            if (limited) color(R.color.orange_500) else color(R.color.teal_100),
-            if (limited) color(R.color.ink_900) else color(R.color.teal_700)
-        ), LinearLayout.LayoutParams(-2, -2).apply { bottomMargin = dp(12) })
+        if (!limited) root.addView(
+            chip("\u25CF " + tr(S.ONLINE_STATUS), color(R.color.teal_100), color(R.color.teal_700)),
+            LinearLayout.LayoutParams(-2, -2).apply { bottomMargin = dp(12) }
+        )
 
         val radius = Spinner(this).apply {
             adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_dropdown_item, (1..50).map { "$it km" })
@@ -1114,8 +1135,21 @@ class MainActivity : AppCompatActivity() {
             }
             root.addView(row, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(10) })
         }
-        button(tr(S.PENDING_APPROVALS), BtnStyle.TEXT) { showPendingApprovals() }
-        button(tr(S.SYNC_NOW), BtnStyle.TEXT) { syncAll(silent = false) }
+        run {
+            val outer = root
+            val pair = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            outer.addView(pair, LinearLayout.LayoutParams(-1, -2))
+            root = pair
+            button(tr(S.PENDING_APPROVALS), BtnStyle.SECONDARY) { showPendingApprovals() }
+            button(tr(S.SYNC_NOW), BtnStyle.SECONDARY) { syncAll(silent = false) }
+            root = outer
+            for (i in 0 until pair.childCount) {
+                (pair.getChildAt(i) as? Button)?.textSize = 13.5f
+                pair.getChildAt(i).layoutParams = LinearLayout.LayoutParams(0, -2, 1f).apply {
+                    marginStart = if (i == 0) 0 else dp(5); marginEnd = if (i == 0) dp(5) else 0; bottomMargin = dp(10)
+                }
+            }
+        }
         if (limited) {
             val card = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
