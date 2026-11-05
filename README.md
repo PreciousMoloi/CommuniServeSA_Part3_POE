@@ -70,12 +70,12 @@ Data is saved to `server/data/db.json` (git-ignored) and survives restarts — p
 4. For Google SSO and push, add Firebase — see [docs/FIREBASE_SETUP.md](docs/FIREBASE_SETUP.md). Without `google-services.json` everything else still works and SSO/push report “not configured”.
 
 ## Testing & GitHub Actions
-- Android unit tests: `./gradlew testDebugUnitTest` (validators, translations, data contracts, server-address rules).
-- API tests: `cd server && npm test` (auth, SSO token verification, protected routes, validation, listings, reviews, restart persistence).
-- **GitHub Actions** (`.github/workflows/build.yml`) is configured to run API tests, Android unit tests and a debug APK build on pushes/PRs to `main`. A successful run has not been independently verified in this packaged environment; link or screenshot the actual green Actions run after it completes.
-- **Test evidence (expected vs actual, pass/fail):** [docs/TEST_EVIDENCE.md](docs/TEST_EVIDENCE.md).
-- Manual test plans: [docs/POSTMAN_TEST_PLAN.md](docs/POSTMAN_TEST_PLAN.md), [docs/FEATURE_EVIDENCE_CHECKLIST.md](docs/FEATURE_EVIDENCE_CHECKLIST.md).
-- * **Link to successful Github Actions run:**[View passing build here](https://github.com/PreciousMoloi/CommuniServeSA_Part3_POE/actions/runs/41997901823)
+
+* **Android unit tests:** `./gradlew testDebugUnitTest` (validators, translations, data contracts, server-address rules).
+* **API tests:** `cd server && npm test` (auth, SSO token verification, protected routes, validation, listings, reviews, restart persistence).
+* **GitHub Actions CI:** The pipeline (`.github/workflows/build.yml`) automatically runs API tests, Android unit tests, and a debug APK build on every push to `master`.
+* **Successful CI Run:** [View the passing GitHub Actions pipeline here](https://github.com/PreciousMoloi/CommuniServeSA_Part3_POE/actions/runs/41997901823)
+* **Test evidence (expected vs actual, pass/fail):** See `docs/TEST_EVIDENCE.md`.
 
 ## Publishing (Google Play)
 Release signing, store listing text, data-safety answers, privacy policy and graphics: [docs/PLAY_STORE_PUBLISHING.md](docs/PLAY_STORE_PUBLISHING.md). Graphics are in `docs/store/`. The app targets API 36 as Google Play now requires for new apps.
