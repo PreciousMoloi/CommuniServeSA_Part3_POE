@@ -7,9 +7,9 @@ name: Android CI
 #   3. the app compiles into an installable APK.
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
