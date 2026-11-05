@@ -1057,7 +1057,7 @@ class MainActivity : AppCompatActivity() {
         }
         fun runSearch(q: String) {
             prefs.radius = Validators.clampRadius(radius.selectedItemPosition + 1)
-            loadServices(q)
+            loadServices(q, reveal = true)
         }
         // Pressing the keyboard's search key runs the search, same as the Find Services button.
         search.setSingleLine(true)
@@ -1209,21 +1209,51 @@ class MainActivity : AppCompatActivity() {
     private fun matches(query: String, vararg parts: String) =
         query.isBlank() || parts.joinToString(" ").contains(query, ignoreCase = true)
 
-    private fun loadServices(query: String) {
+    /** Events matching the current Discover search, shown under the services. */
+    private var discoverEvents: List<EventDto> = emptyList()
+
+    /**
+     * Searches services AND events together so a search always finds what exists.
+     * When [reveal] is true (a person-triggered search) the keyboard closes and the list scrolls into view.
+     */
+    private fun loadServices(query: String, reveal: Boolean = false) {
         lifecycleScope.launch {
+            var offline = false
             callApi { api -> api.services(query, prefs.radius) }
                 .onSuccess { result ->
                     services = result
                     if (query.isBlank()) prefs.cachedServicesJson = gson.toJson(result)
-                    renderServices(offline = false)
                 }
                 .onFailure {
                     // Offline: show the last successful results (or the built-in demo data on first launch).
+                    offline = true
                     val cached = readCache(prefs.cachedServicesJson, Array<ServiceDto>::class.java).ifEmpty { demoServices() }
                     services = cached.filter { matches(query, it.title, it.category, it.description) && it.distanceKm <= prefs.radius }
-                    renderServices(offline = true)
                 }
+            callApi { api -> api.events(query, prefs.radius) }
+                .onSuccess { result ->
+                    discoverEvents = result
+                    if (query.isBlank()) prefs.cachedEventsJson = gson.toJson(result)
+                }
+                .onFailure {
+                    val cached = readCache(prefs.cachedEventsJson, Array<EventDto>::class.java).ifEmpty { demoEvents() }
+                    discoverEvents = cached.filter { e -> matches(query, e.title, e.category, e.description) }
+                }
+            renderServices(offline)
+            if (reveal) revealResults()
         }
+    }
+
+    /** Closes the keyboard and scrolls so the search results are on screen without manual scrolling. */
+    private fun revealResults() {
+        val panel = resultsPanel ?: return
+        currentFocus?.let { v ->
+            (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager)
+                .hideSoftInputFromWindow(v.windowToken, 0)
+        }
+        panel.postDelayed({
+            if (panel.isAttachedToWindow) scroll.smoothScrollTo(0, (panel.top - dp(12)).coerceAtLeast(0))
+        }, 250)
     }
 
     private fun renderServices(offline: Boolean) {
@@ -1241,6 +1271,11 @@ class MainActivity : AppCompatActivity() {
                 meta = "${s.category} • ${stars(s.rating)} ${s.rating} • ${km(s.distanceKm)} km",
                 badgeText = if (s.verified) tr(S.VERIFIED) else null
             ) { showService(s) })
+        }
+        sectionLabel("${tr(S.COMMUNITY_EVENTS)} (${discoverEvents.size})", panel)
+        if (discoverEvents.isEmpty()) panel.addView(emptyState(tr(S.NO_EVENTS)))
+        discoverEvents.forEach { e ->
+            panel.addView(cardRow(title = e.title, meta = "${e.category} • ${e.dateTime}\n${e.venue}", badgeIsAccent = true) { showEvent(e) })
         }
     }
 
