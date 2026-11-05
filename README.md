@@ -1,101 +1,56 @@
 # CommuniServe SA
 
-**Discover Local. Connect Community.** — an Android app (Kotlin) for finding trusted local services and community events in South Africa, with a Node.js REST API.
+A community services app for South Africa: discover local services and events, add your own listings, and keep working offline. Android (Kotlin) app plus a Node.js/Express API.
 
-| | |
+**Module:** OPSC6312 – Part 3 PoE
+
+| Member | Student number |
 |---|---|
-| **Module** | OPSC6312 — Part 3 (final PoE) |
-| **Version** | 3.0 (see [RELEASE_NOTES.md](RELEASE_NOTES.md)) |
-| **Demo video** | Pending: add the group's unlisted demonstration URL after recording and checking the complete user journey. |
-| **Target / min SDK** | 36 (Android 16) / 24 (Android 7.0) |
+| Precious Moloi | ST10452719 |
+| Nyiko Matladi | ST10450403 |
+| Luvuyo Yizani | ST10442920 |
+| Naledi Paballo Tshelane | ST10446045 |
 
-## Group members
-- Precious Moloi — ST10452719
-- Nyiko Matladi — ST10450403
-- Luvuyo Yizani — ST10442920
-- Naledi Paballo Tshelane — ST10446045
-
-## Purpose
-Many South Africans find reliable plumbers, tutors, electricians and local events through word of mouth. CommuniServe SA puts verified local services and community events in one place, works on patchy connections (offline mode), and speaks the user's language (English, Afrikaans, isiZulu).
+- **video:** [Watch on Google Drive](https://drive.google.com/file/d/18ZCTxWemuMIgkK7kuQ48zESAB-PWvqfS/view?usp=drivesdk)
+- **Hosted API:** https://communiservesa.onrender.com/ (Render free tier – the first request after idle takes about 50 seconds)
+- **CI:** [Android CI – green on master](https://github.com/PreciousMoloi/CommuniServeSA_Part3_POE/actions/runs/42015101975)
 
 ## Features
-| Feature | How it works | Code |
-|---|---|---|
-| Register / log in | Email + password; the API stores only a **bcrypt** hash and returns a 24 h JWT | `MainActivity.authenticate`, `server.js /api/auth/*` |
-| **Single sign-on** | “Continue with Google” → Firebase Authentication → the app sends the **Firebase ID token** to `POST /api/auth/sso`; the API verifies its signature, issuer, audience and expiry before issuing our JWT | `FirebaseAuthManager.signInWithGoogle` |
-| **Settings** | Language, search radius, push notifications, dark mode; synced to the server profile | `MainActivity.showProfile` |
-| **REST API** | Express API: services, events, reviews, approvals, profile, devices, health | `server/server.js` |
-| **Offline mode + sync** | Room stores saved items, RSVPs, **queued reviews and listings**; cached lists show offline; auto-sync on reconnect | `data/`, `MainActivity.syncAll` |
-| **Real-time notifications** | Firebase Cloud Messaging topic `community_alerts`; token registered with the API | `push/PushManager.kt`, `CommuniServeMessagingService.kt` |
-| **Multi-language** | English, Afrikaans, isiZulu — every screen and message | `i18n/Strings.kt` |
-| Innovative features | Location-tagged listings, community approval queue, live average ratings, RSVPs, call/directions | see release notes |
-| **Nearby map** | OpenStreetMap (osmdroid): live location, radius circle, service/event pins | `MainActivity.showMap`, `util/MapMath.kt` |
-| Animated splash | Pop-in, pulse and ripple animation on launch | `MainActivity.showSplash` |
-| Input safety | Client + server validation; bad input never crashes the app | `util/Validators.kt` |
+- Register and sign in (email/password via our API with bcrypt + JWT) and **Google single sign-on** (Firebase Authentication, verified server-side).
+- **Discover** with unified search for services and events, category chips, and near-me shortcuts (health, food, transport, repairs, cleaning) that open Google Maps.
+- **User-defined feature 1 – Nearby map:** OpenStreetMap with service and event pins and device location.
+- **User-defined feature 2 – Community listings with moderation:** add a listing, see it under Pending Approvals, approve it, and it appears in the list.
+- **Offline mode:** Room cache; reviews and listings made offline are queued and synced when back online.
+- **Push notifications** with Firebase Cloud Messaging.
+- **Three languages:** English, Afrikaans, isiZulu; settings (radius, dark mode) persist.
+- Friendly validation and error messages; edge-to-edge layout with bottom navigation.
 
-## Architecture
-```
-Android app (Kotlin, single Activity)         Node.js / Express REST API
- ├─ UI built in code (design system)  ──HTTPS──►  /api/auth  /api/services  /api/events
- ├─ Retrofit + OkHttp (ApiClient)                 /api/reviews  /api/pending  /api/devices
- ├─ Room (offline cache + sync queue)             persists to server/data/db.json
- ├─ Firebase Auth (Google SSO)
- └─ Firebase Cloud Messaging (push)
-```
+## Screenshots
+| Login | Register | Discover | Search |
+|---|---|---|---|
+| ![](docs/screenshots/01-login.jpg) | ![](docs/screenshots/02-register.jpg) | ![](docs/screenshots/05-discover.jpg) | ![](docs/screenshots/06-search-electrician.jpg) |
 
-## Run the REST API
-```bash
-cd server
-npm install
-# Development: JWT_SECRET is optional (a random one is generated per run).
-# Production (NODE_ENV=production): JWT_SECRET (32+ chars) is REQUIRED or the server refuses to start.
-# PowerShell:  $env:FIREBASE_PROJECT_ID = "communiserve-sa"
-# bash:        export FIREBASE_PROJECT_ID="communiserve-sa"
-npm start            # http://localhost:3000/health
-npm test             # API test suite (includes a restart-persistence test)
-```
-| Variable | Purpose |
-|---|---|
-| `JWT_SECRET` | Signs sessions. Required (32+ chars) in production. |
-| `FIREBASE_PROJECT_ID` | Enables server-side verification of Google SSO tokens. Without it `/api/auth/sso` returns 503. |
-| `CORS_ORIGINS` | Comma-separated browser origins allowed; unset = none (the Android app is unaffected). |
-| `DATA_FILE` | Path of the JSON database (default `server/data/db.json`). |
+| Offline queue | Sync | isiZulu | Map |
+|---|---|---|---|
+| ![](docs/screenshots/12-offline-mode-queue.jpg) | ![](docs/screenshots/13-offline-sync-success.jpg) | ![](docs/screenshots/14-language-isizulu.jpg) | ![](docs/screenshots/18-nearby-map.jpg) |
 
-Data is saved to `server/data/db.json` (git-ignored) and survives restarts — proven by `server/test/persistence.test.js`, which starts the real server, writes data, restarts it and reads the data back. On hosts with an ephemeral disk (e.g. Render free tier) the file is wiped on redeploy; use a persistent disk or a managed database for production.
+More in [docs/TEST_EVIDENCE.md](docs/TEST_EVIDENCE.md).
 
-## Run the app
-1. Open the folder in **Android Studio** (Ladybug or newer) and let Gradle sync (JDK 21).
-2. **Emulator:** the default API address `http://10.0.2.2:3000/` works.
-3. **Physical phone:** the app automatically uses the hosted HTTPS API (deploy it once with `render.yaml`, see [docs/DEPLOY_API_RENDER.md](docs/DEPLOY_API_RENDER.md)). To use a local API instead, run it on your PC, join the same Wi-Fi, and in the debug app’s *Server address* box enter `http://<your-PC-LAN-IP>:3000/` → **Save & Test Connection**. The app wakes a sleeping free-tier server on launch.
-4. For Google SSO and push, add Firebase — see [docs/FIREBASE_SETUP.md](docs/FIREBASE_SETUP.md). Without `google-services.json` everything else still works and SSO/push report “not configured”.
+## Testing
+- API: `cd server && npm test` → 11/11 pass.
+- Android: `.\gradlew.bat testDebugUnitTest` → 31 tests, 0 failures; `.\gradlew.bat assembleDebug` builds.
+- Physical phone: 15 of 16 manual tests pass; TC-09 is a documented hosting limitation (below).
 
-## Testing & GitHub Actions
+## Google Play readiness
+Publishing needs a one-off US$25 developer fee. As instructed by our lecturer, we documented every sign-up step up to the payment screen: [docs/PLAY_STORE_EVIDENCE.md](docs/PLAY_STORE_EVIDENCE.md). The signed release APK, store graphics, privacy policy and listing text are ready.
 
-* **Android unit tests:** `./gradlew testDebugUnitTest` (validators, translations, data contracts, server-address rules).
-* **API tests:** `cd server && npm test` (auth, SSO token verification, protected routes, validation, listings, reviews, restart persistence).
-* **GitHub Actions CI:** The pipeline (`.github/workflows/build.yml`) automatically runs API tests, Android unit tests, and a debug APK build on every push to `master`.
-* **Successful CI Run:** [View the passing GitHub Actions pipeline here](https://github.com/PreciousMoloi/CommuniServeSA_Part3_POE/actions/runs/41997901823)
-* **Test evidence (expected vs actual, pass/fail):** See `docs/TEST_EVIDENCE.md`.
+## Hosting note
+The API stores data in `server/data/db.json`. Render's free tier has an ephemeral disk, so a restart or redeploy resets the data. The restart-persistence test passes locally; a paid persistent disk or a database would remove this limitation.
 
-## Publishing (Google Play)
-Release signing, store listing text, data-safety answers, privacy policy and graphics: [docs/PLAY_STORE_PUBLISHING.md](docs/PLAY_STORE_PUBLISHING.md). Graphics are in `docs/store/`. The app targets API 36 as Google Play now requires for new apps.
+## Run it
+1. API: `cd server && npm install && npm start` (set `JWT_SECRET`, `FIREBASE_PROJECT_ID=communiservesa-sa`).
+2. Android: add your own `app/google-services.json`, open in Android Studio, run on a device. See [docs/FIREBASE_SETUP.md](docs/FIREBASE_SETUP.md).
+3. Release build: see [docs/PLAY_STORE_PUBLISHING.md](docs/PLAY_STORE_PUBLISHING.md).
 
-## Screenshots and demonstration evidence
-The `docs/device-evidence/` folder contains two genuine physical-device photographs captured during development on 4 November 2026. They show the Discover screen and Add Service/Event form while the API was unavailable. They document the observed UI state; they do not prove successful server submission. Replace or supplement them with clean screenshots of successful login, online discovery, listing submission, offline queue/synchronisation, language settings and notifications after those scenarios have been retested. Add the unlisted demo URL above only after recording it.
-
-## AI tools
-See [docs/AI_USE_WRITEUP.md](docs/AI_USE_WRITEUP.md).
-
-## Security notes
-- Google SSO: the API trusts only the e-mail inside a **verified Firebase ID token**, never an e-mail typed into the request.
-- Passwords are bcrypt-hashed (cost 12); auth routes are rate limited; there is no default JWT secret in production.
-- Password reset by e-mail is **not implemented**; `/api/auth/forgot-password` honestly returns HTTP 501.
-No secrets are committed: `JWT_SECRET`, keystores and passwords come from environment variables; `.gitignore` excludes keystores and the API data file. Production should run the API over HTTPS with a strong `JWT_SECRET` and a managed database.
-
-## References
-- Square. *Retrofit*. https://square.github.io/retrofit/
-- Android Developers. *Room persistence library*. https://developer.android.com/training/data-storage/room
-- osmdroid. *OpenStreetMap for Android*. https://github.com/osmdroid/osmdroid
-- © OpenStreetMap contributors. https://www.openstreetmap.org/copyright
-- Firebase. *Cloud Messaging*. https://firebase.google.com/docs/cloud-messaging
-- Firebase. *Authentication – Google sign-in*. https://firebase.google.com/docs/auth/android/google-signin
+## Documents
+[Release notes](RELEASE_NOTES.md) · [Test evidence](docs/TEST_EVIDENCE.md) · [AI use write-up](docs/AI_USE_WRITEUP.md) · [Play Store evidence](docs/PLAY_STORE_EVIDENCE.md) · [Privacy policy](docs/PRIVACY_POLICY.md) · [Deploy API](docs/DEPLOY_API_RENDER.md) · [Postman plan](docs/POSTMAN_TEST_PLAN.md) · [Final report](docs/CommuniServeSA_Part3_Final_Report.pdf)
