@@ -21,7 +21,7 @@ android {
         // Deployed (HTTPS) API - what a physical phone uses by default. Override with RELEASE_API_URL.
         val hostedUrl = (project.findProperty("RELEASE_API_URL") as String?)
             ?: System.getenv("RELEASE_API_URL")
-            ?: "https://communiservesa-api.onrender.com/"
+            ?: "https://communiservesa.onrender.com/"
         buildConfigField("String", "HOSTED_API_URL", "\"$hostedUrl\"")
         manifestPlaceholders["usesCleartext"] = "true"
     }
@@ -46,7 +46,7 @@ android {
             // Production traffic must be HTTPS (set RELEASE_API_URL in gradle.properties or the environment).
             val releaseUrl = (project.findProperty("RELEASE_API_URL") as String?)
                 ?: System.getenv("RELEASE_API_URL")
-                ?: "https://communiservesa-api.onrender.com/"
+                ?: "https://communiservesa.onrender.com/"
             buildConfigField("String", "API_BASE_URL", "\"$releaseUrl\"")
             manifestPlaceholders["usesCleartext"] = "false"
             isMinifyEnabled = false

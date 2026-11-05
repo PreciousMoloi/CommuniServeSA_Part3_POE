@@ -308,6 +308,7 @@ class MainActivity : AppCompatActivity() {
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout() or WindowInsetsCompat.Type.ime()
             )
+            if (bars.top > 0 || bars.bottom > 0) insetsSeen = true
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             WindowInsetsCompat.CONSUMED
         }
@@ -319,14 +320,19 @@ class MainActivity : AppCompatActivity() {
      * Safety net: if the system never reports bar insets (some devices/themes), pad by the
      * status and navigation bar sizes from resources so content never sits under the system bars.
      */
+    private var insetsSeen = false
+
     private fun applyFallbackInsets(container: View) {
         container.post {
-            if (container.paddingTop == 0 && container.paddingBottom == 0) {
+            if (!insetsSeen) {
                 fun size(name: String): Int {
                     val id = resources.getIdentifier(name, "dimen", "android")
                     return if (id > 0) resources.getDimensionPixelSize(id) else 0
                 }
-                container.setPadding(0, size("status_bar_height"), 0, size("navigation_bar_height"))
+                container.setPadding(
+                    container.paddingLeft, container.paddingTop + size("status_bar_height"),
+                    container.paddingRight, container.paddingBottom + size("navigation_bar_height")
+                )
             }
         }
     }
@@ -893,6 +899,7 @@ class MainActivity : AppCompatActivity() {
     private fun describeAuthError(e: Throwable, register: Boolean): String = when {
         e is HttpException && e.code() == 401 -> tr(S.ERR_BAD_LOGIN)
         e is HttpException && e.code() == 409 -> tr(S.ERR_EMAIL_EXISTS)
+        e is HttpException && e.code() == 404 -> tr(S.ERR_SERVICE_MOVED)
         e is HttpException && e.code() == 400 && register -> tr(S.ERR_WEAK_PASSWORD)
         e is HttpException -> tr(S.ERR_SERVER, e.code())
         e is IOException -> tr(S.ERR_NETWORK)
@@ -1051,6 +1058,14 @@ class MainActivity : AppCompatActivity() {
         fun runSearch(q: String) {
             prefs.radius = Validators.clampRadius(radius.selectedItemPosition + 1)
             loadServices(q)
+        }
+        // Pressing the keyboard's search key runs the search, same as the Find Services button.
+        search.setSingleLine(true)
+        search.imeOptions = android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
+        search.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+                runSearch(search.text.toString().trim()); true
+            } else false
         }
         // Category chips: "All" searches the directory; the others open "near me" results in Maps.
         val cats = listOf(
@@ -1728,6 +1743,8 @@ class MainActivity : AppCompatActivity() {
                 if (synced > 0) toast(tr(S.SYNC_DONE, synced))
                 else if (!silent) toast(if (total == 0) tr(S.SYNC_NOTHING) else tr(S.ERR_NETWORK))
                 updateQueueNote()
+                // Back online: refresh the Discover list so the "Offline mode" badge disappears.
+                if (resultsPanel != null) loadServices("")
                 PushManager.registerWithServer(prefs)
             } catch (t: Throwable) {
                 Log.e(TAG, "Offline sync failed", t)
@@ -1899,6 +1916,7 @@ class MainActivity : AppCompatActivity() {
         }
         ViewCompat.setOnApplyWindowInsetsListener(container) { v, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            if (bars.top > 0 || bars.bottom > 0) insetsSeen = true
             v.setPadding(bars.left + dp(16), bars.top + dp(12), bars.right + dp(16), bars.bottom + dp(8))
             WindowInsetsCompat.CONSUMED
         }
@@ -2058,6 +2076,7 @@ class MainActivity : AppCompatActivity() {
 
         container.addView(bottomNav(Tab.MAP), LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(8) })
         setContentView(container)
+        applyFallbackInsets(container)
         redraw()
         lifecycleScope.launch {
             refreshListingsForMap()
