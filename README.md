@@ -75,6 +75,7 @@ Data is saved to `server/data/db.json` (git-ignored) and survives restarts — p
 - **GitHub Actions** (`.github/workflows/build.yml`) is configured to run API tests, Android unit tests and a debug APK build on pushes/PRs to `main`. A successful run has not been independently verified in this packaged environment; link or screenshot the actual green Actions run after it completes.
 - **Test evidence (expected vs actual, pass/fail):** [docs/TEST_EVIDENCE.md](docs/TEST_EVIDENCE.md).
 - Manual test plans: [docs/POSTMAN_TEST_PLAN.md](docs/POSTMAN_TEST_PLAN.md), [docs/FEATURE_EVIDENCE_CHECKLIST.md](docs/FEATURE_EVIDENCE_CHECKLIST.md).
+- * **Link to successful Github Actions run:**[View passing build here](https://github.com/PreciousMoloi/CommuniServeSA_Part3_POE/actions/runs/41997901823)
 
 ## Publishing (Google Play)
 Release signing, store listing text, data-safety answers, privacy policy and graphics: [docs/PLAY_STORE_PUBLISHING.md](docs/PLAY_STORE_PUBLISHING.md). Graphics are in `docs/store/`. The app targets API 36 as Google Play now requires for new apps.
