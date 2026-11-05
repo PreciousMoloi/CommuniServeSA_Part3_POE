@@ -53,3 +53,5 @@ Changes since the Part 2 prototype (v2.0). Each item is tagged with the rubric f
 - **Google SSO retries once.** If the API exchange fails because the server is asleep or restarting, the app wakes it and retries before falling back to the limited Google-only session.
 - **One-click API deployment.** Added `render.yaml` (Render Blueprint) with `NODE_ENV`, a generated `JWT_SECRET` and `FIREBASE_PROJECT_ID`.
 - **Tests.** Added `ServerConfigTest` (6 cases). Results are recorded only in `docs/TEST_EVIDENCE.md` after being run.
+## Testing
+API 11/11, Android unit tests 31/31, CI green, 15 of 16 manual device tests pass. See `docs/TEST_EVIDENCE.md`.
