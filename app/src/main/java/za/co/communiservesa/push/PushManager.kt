@@ -1,6 +1,7 @@
 package za.co.communiservesa.push
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -56,6 +57,7 @@ object PushManager {
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
 
     /** Shows a notification that opens the app when tapped. Returns false if it could not be shown. */
+    @SuppressLint("MissingPermission")
     fun show(context: Context, title: String, body: String): Boolean {
         return try {
             if (!canPost(context)) return false
@@ -88,6 +90,8 @@ object PushManager {
             val messaging = FirebaseMessaging.getInstance()
             val token = messaging.token.await()
             prefs.pushToken = token
+
+            Log.d("FCM_TOKEN", "My Token is: $token") // <--- ADD THIS LINE
             messaging.subscribeToTopic(TOPIC).await()
             Log.i(TAG, "Subscribed to $TOPIC")
             registerWithServer(prefs)
