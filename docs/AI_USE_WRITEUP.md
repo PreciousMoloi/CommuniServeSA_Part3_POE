@@ -1,6 +1,6 @@
-# AI use write-up (≤ 500 words)
+# AI use write-up 
 
-> Edit this so it reflects what *your group* actually did — markers check that it is honest and specific.
+
 
 **Tool used:** Claude (Anthropic), via the Claude mobile/web app, during Part 3.
 
