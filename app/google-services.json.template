@@ -1,0 +1,20 @@
+{
+  "_comment": "TEMPLATE ONLY - this is not a real Firebase config and will not work. Replace this whole file with the google-services.json downloaded from your own Firebase project (Project settings > Your apps > Android app), then rename it to google-services.json (drop the .template extension) and place it here, in app/ alongside build.gradle.kts.",
+  "project_info": {
+    "project_id": "REPLACE_WITH_YOUR_FIREBASE_PROJECT_ID"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "REPLACE_WITH_YOUR_APP_ID",
+        "android_client_info": {
+          "package_name": "za.co.communiservesa"
+        }
+      },
+      "api_key": [
+        { "current_key": "REPLACE_WITH_YOUR_API_KEY" }
+      ]
+    }
+  ],
+  "configuration_version": "1"
+}

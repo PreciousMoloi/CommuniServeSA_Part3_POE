@@ -1,0 +1,17 @@
+<resources>
+    <!-- Edge-to-edge is enforced on Android 15/16 (targetSdk 35/36), so system-bar
+         colours are no longer set here; MainActivity draws behind the bars and
+         pads the content with the window insets instead. -->
+    <style name="Theme.CommuniServeSA" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:windowBackground">@color/cream_bg</item>
+        <item name="colorPrimary">@color/teal_700</item>
+        <item name="colorPrimaryDark">@color/teal_900</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/orange_500</item>
+        <item name="colorOnSecondary">@color/ink_900</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/ink_900</item>
+        <item name="android:textColorHint">@color/ink_400</item>
+    </style>
+</resources>

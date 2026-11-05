@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark-mode palette: same names as values/colors.xml, so every screen
+         (which reads colours by name) switches automatically. -->
+    <color name="teal_700">#1B7A69</color>
+    <color name="teal_500">#35A08A</color>
+    <color name="teal_100">#17332E</color>
+    <color name="orange_500">#E0AA55</color>
+    <color name="orange_700">#E8BC78</color>
+
+    <color name="cream_bg">#111715</color>
+    <color name="surface">#1B2421</color>
+    <color name="surface_alt">#26312D</color>
+    <color name="ink_900">#EEF2EF</color>
+    <color name="ink_600">#B4BFB9</color>
+    <color name="ink_400">#7F8B85</color>
+    <color name="divider">#33403B</color>
+    <color name="error">#FF8A7A</color>
+</resources>

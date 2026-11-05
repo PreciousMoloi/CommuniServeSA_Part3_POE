@@ -1,0 +1,19 @@
+.gradle/
+.idea/
+/build/
+app/build/
+local.properties
+*.iml
+.DS_Store
+node_modules/
+.env
+server/.env
+.kotlin/
+server/data/
+
+# --- added for Part 3 ---
+.kotlin/
+*.jks
+*.keystore
+keystore.properties
+local.properties
